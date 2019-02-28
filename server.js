@@ -1,6 +1,17 @@
 // 导入WebSocket模块:
 const WebSocket = require('ws');
 
+const MessageType = {
+    // 新消息
+    Message: 1,
+    // 用户列表
+    UserList: 2,
+    // 登录状态检测
+    LoginState: 3,
+    // 系统消息
+    SysMessage: 4,
+}
+
 // 引用Server类:
 const WebSocketServer = WebSocket.Server;
 
@@ -12,18 +23,17 @@ const wss = new WebSocketServer({
 let allws = [];
 
 wss.on('connection', function (ws) {
-    console.log(`[SERVER] connection()`);
+    console.log('connection');
+
     allws.push(ws);
     ws.on('message', function (message) {
-        console.log(`[SERVER] Received: ${message}`);
-
         allws.map((item, index)=>{
-            item.send(`${index} ECHO: ${message}`, (err) => {
+            item.send(message, (err) => {
                 if (err) {
                     console.log(`[SERVER] error: ${err}`);
                 }
             });
         })
     });
-    
+
 });
